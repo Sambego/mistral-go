@@ -22,11 +22,12 @@ type ChatRequestParams struct {
 }
 
 var DefaultChatRequestParams = ChatRequestParams{
-	Temperature: 1,
-	TopP:        1,
-	RandomSeed:  42069,
-	MaxTokens:   4000,
-	SafePrompt:  false,
+	Temperature:    1,
+	TopP:           1,
+	RandomSeed:     42069,
+	MaxTokens:      4000,
+	SafePrompt:     false,
+	ResponseFormat: ResponseFormat{Type: "text"},
 }
 
 // ChatCompletionResponseChoice represents a choice in the chat completion response.
@@ -92,8 +93,8 @@ func (c *MistralClient) Chat(model string, messages []ChatMessage, params *ChatR
 	if params.ToolChoice != "" {
 		requestData["tool_choice"] = params.ToolChoice
 	}
-	if params.ResponseFormat != "" {
-		requestData["response_format"] = map[string]any{"type": params.ResponseFormat}
+	if params.ResponseFormat != (ResponseFormat{}) {
+		requestData["response_format"] = params.ResponseFormat
 	}
 
 	response, err := c.request(http.MethodPost, requestData, "v1/chat/completions", false, nil)
@@ -140,8 +141,8 @@ func (c *MistralClient) ChatStream(model string, messages []ChatMessage, params 
 	if params.ToolChoice != "" {
 		requestData["tool_choice"] = params.ToolChoice
 	}
-	if params.ResponseFormat != "" {
-		requestData["response_format"] = map[string]any{"type": params.ResponseFormat}
+	if params.ResponseFormat != (ResponseFormat{}) {
+		requestData["response_format"] = params.ResponseFormat
 	}
 
 	response, err := c.request(http.MethodPost, requestData, "v1/chat/completions", true, nil)

@@ -38,18 +38,18 @@ const (
 )
 
 type ResponseFormatSchema struct {
-	Schema *jsonschema.Schema `json:"schema"`
-	Name   string             `json:"name"`
-	Strict bool               `json:"strict,default=true"`
+	Schema *jsonschema.Schema `json:"schema,omitempty"`
+	Name   string             `json:"name,omitempty"`
+	Strict bool               `json:"strict,omitempty"`
 }
 
 type ResponseFormat struct {
-	Type       string               `json:"type,default=json_schema"`
-	JsonSchema ResponseFormatSchema `json:"json_schema"`
+	Type       string                `json:"type"`
+	JsonSchema *ResponseFormatSchema `json:"json_schema,omitempty"`
 }
 
 func NewJsonSchemaResponseFormat(name string, schema *jsonschema.Schema) *ResponseFormat {
-	return &ResponseFormat{Type: "json_schema", JsonSchema: ResponseFormatSchema{Schema: schema, Name: name, Strict: true}}
+	return &ResponseFormat{Type: "json_schema", JsonSchema: &ResponseFormatSchema{Schema: schema, Name: name, Strict: true}}
 }
 
 var (
