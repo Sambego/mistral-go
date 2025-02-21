@@ -1,14 +1,18 @@
 package mistral
 
+import (
+	"github.com/invopop/jsonschema"
+)
+
 const (
 	ModelMistralLargeLatest  = "mistral-large-latest"
 	ModelMistralMediumLatest = "mistral-medium-latest"
 	ModelMistralSmallLatest  = "mistral-small-latest"
 	ModelCodestralLatest     = "codestral-latest"
-	
-	ModelOpenMixtral8x7b     = "open-mixtral-8x7b"
-	ModelOpenMixtral8x22b    = "open-mixtral-8x22b"
-	ModelOpenMistral7b       = "open-mistral-7b"
+
+	ModelOpenMixtral8x7b  = "open-mixtral-8x7b"
+	ModelOpenMixtral8x22b = "open-mixtral-8x22b"
+	ModelOpenMistral7b    = "open-mistral-7b"
 
 	ModelMistralLarge2402  = "mistral-large-2402"
 	ModelMistralMedium2312 = "mistral-medium-2312"
@@ -33,12 +37,25 @@ const (
 	FinishReasonError  FinishReason = "error"
 )
 
-// ResponseFormat the format that the response must adhere to
-type ResponseFormat string
+type ResponseFormatSchema struct {
+	Schema *jsonschema.Schema `json:"schema"`
+	Name   string             `json:"name"`
+	Strict bool               `json:"strict,default=true"`
+}
 
-const (
-	ResponseFormatText       ResponseFormat = "text"
-	ResponseFormatJsonObject ResponseFormat = "json_object"
+type ResponseFormat struct {
+	Type       string               `json:"type,default=json_schema"`
+	JsonSchema ResponseFormatSchema `json:"json_schema"`
+}
+
+func NewJsonSchemaResponseFormat(name string, schema *jsonschema.Schema) *ResponseFormat {
+	return &ResponseFormat{Type: "json_schema", JsonSchema: ResponseFormatSchema{Schema: schema, Name: name, Strict: true}}
+}
+
+var (
+	ResponseFormatText       = ResponseFormat{Type: "text"}
+	ResponseFormatJsonObject = ResponseFormat{Type: "json_object"}
+	ResponseFormatJsonSchema = NewJsonSchemaResponseFormat
 )
 
 // ToolType type of tool defined for the llm
